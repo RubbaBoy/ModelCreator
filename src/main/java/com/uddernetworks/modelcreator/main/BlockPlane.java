@@ -31,10 +31,12 @@ public class BlockPlane {
      * @return The requested block
      */
     public Block getBlock(int x, int z) {
-        return grid[z][x];
+        if (x >= grid.length || z >= grid[0].length ||
+            x < 0 || z < 0) return null;
+        return grid[z][x].isEnabled() ? grid[z][x] : null;
     }
 
-    public void loop(MappedTextures mappedTextures, TriConsumer<Block, Integer, Integer> triConsumer) {
+    public void loop(MappedTextures mappedTextures, TriConsumer<Block, Integer, Integer> triConsumer) throws CloneNotSupportedException {
         for (int z = 0; z < grid.length; z++) {
             for (int x = 0; x < grid[0].length; x++) {
                 if (!grid[z][x].getTexture(mappedTextures).equals("#transparent")) triConsumer.accept(grid[z][x], x, z);

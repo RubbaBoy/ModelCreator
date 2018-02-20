@@ -34,11 +34,188 @@ public class Blocks3D {
         }
     }
 
-    public void iterate(MappedTextures mappedTextures, BiConsumer<Block, CoordinateSet> consumer) {
+    public void iterate(MappedTextures mappedTextures, BiConsumer<Block, CoordinateSet> consumer) throws CloneNotSupportedException {
         for (int y = 0; y < blocks.size(); y++) {
             int finalY = y;
-            blocks.get(y).loop(mappedTextures, (block, x, z) -> consumer.accept(block, new CoordinateSet(x, finalY, z, x + 1, finalY + 1, z + 1)));
+            blocks.get(y).loop(mappedTextures, (block, x, z) -> {
+                if (block.isEnabled()) {
+                    CoordinateSet coordinateSet = fillBiggest(mappedTextures, block, new CoordinateSet(x, finalY, z, x + 1, finalY + 1, z + 1));
+                    consumer.accept(block, coordinateSet);
+                }
+            });
         }
+    }
+
+    public CoordinateSet fillBiggest(MappedTextures mappedTextures, Block block, CoordinateSet coordinateSet) throws CloneNotSupportedException {
+        int startX = coordinateSet.getX1();
+        int startY = coordinateSet.getY1();
+        int startZ = coordinateSet.getZ1();
+
+        String startTexture = block.getTexture(mappedTextures);
+
+        if (startTexture.equals("#transparent")) return coordinateSet;
+
+        /*
+         * START OF XXXXXXXXXXXXXXXXXXXXXX VALUES
+         */
+
+        CoordinateSet xCoordinates = coordinateSet.clone();
+        List<Block> xBlocks = new ArrayList<>();
+
+        CoordinateSet yCoordinates = coordinateSet.clone();
+        List<Block> yBlocks = new ArrayList<>();
+
+        CoordinateSet zCoordinates = coordinateSet.clone();
+        List<Block> zBlocks = new ArrayList<>();
+
+        // Going through future positive values on X axis
+
+        int index = 0;
+
+        while (true) {
+            index++;
+
+            Block nextBlock = getBlock(startX + index, startY, startZ);
+
+            if (nextBlock == null || !nextBlock.getTexture(mappedTextures).equals(startTexture) || !nextBlock.isEnabled()) break;
+
+            xCoordinates.setX2(startX + index);
+            xBlocks.add(nextBlock);
+        }
+
+        // Going through all future negative values on X axis
+
+        index = 0;
+
+        while (true) {
+            index--;
+
+            Block nextBlock = getBlock(startX + index, startY, startZ);
+
+            if (nextBlock == null || !nextBlock.getTexture(mappedTextures).equals(startTexture) || !nextBlock.isEnabled()) break;
+
+            xCoordinates.setX1(startX + index);
+            xBlocks.add(nextBlock);
+        }
+
+        /*
+         * END OF XXXXXXXXXXXXXXXXXXXXXX VALUES
+         */
+
+
+
+        /*
+         * START OF YYYYYYYYYYYYYYYYYYYYYYY VALUES
+         */
+
+        // Going through future positive values on Y axis
+
+        index = 0;
+
+        while (true) {
+            index++;
+
+            Block nextBlock = getBlock(startX, startY + index, startZ);
+
+            if (nextBlock == null || !nextBlock.getTexture(mappedTextures).equals(startTexture) || !nextBlock.isEnabled()) break;
+
+            yCoordinates.setY2(startY + index);
+            yBlocks.add(nextBlock);
+        }
+
+        // Going through all future negative values on Y axis
+
+        index = 0;
+
+        while (true) {
+            index--;
+
+            Block nextBlock = getBlock(startX, startY + index, startZ);
+
+            if (nextBlock == null || !nextBlock.getTexture(mappedTextures).equals(startTexture) || !nextBlock.isEnabled()) break;
+
+            yCoordinates.setY1(startY + index);
+            yBlocks.add(nextBlock);
+        }
+
+        /*
+         * END OF YYYYYYYYYYYYYYYYYYYYYYY VALUES
+         */
+
+
+
+        /*
+         * START OF ZZZZZZZZZZZZZZZZZZZZZZZZZ VALUES
+         */
+
+        // Going through future positive values on Z axis
+
+        index = 0;
+
+        while (true) {
+            index++;
+
+            Block nextBlock = getBlock(startX, startY, startZ + index);
+
+            if (nextBlock == null || !nextBlock.getTexture(mappedTextures).equals(startTexture) || !nextBlock.isEnabled()) break;
+
+            zCoordinates.setZ2(startZ + index);
+            zBlocks.add(nextBlock);
+        }
+
+        // Going through all future negative values on Z axis
+
+        index = 0;
+
+        while (true) {
+            index--;
+
+            Block nextBlock = getBlock(startX, startY, startZ + index);
+
+            if (nextBlock == null || !nextBlock.getTexture(mappedTextures).equals(startTexture) || !nextBlock.isEnabled()) break;
+
+            zCoordinates.setZ1(startZ + index);
+            zBlocks.add(nextBlock);
+        }
+
+        /*
+         * END OF ZZZZZZZZZZZZZZZZZZZZZZZZZ VALUES
+         */
+
+
+        int direction = 0; // 0 = x
+                           // 1 = y
+                           // 2 = z
+
+        if (yBlocks.size() > xBlocks.size()) {
+            direction = 1;
+        }
+
+        if (direction == 1) {
+            if (zBlocks.size() > yBlocks.size()) {
+                direction = 2;
+            }
+        } else {
+            if (zBlocks.size() > xBlocks.size()) {
+                direction = 2;
+            }
+        }
+
+        System.out.println("direction = " + direction);
+
+        switch (direction) {
+            case 0:
+                xBlocks.forEach(xBlock -> xBlock.setEnabled(false));
+                return xCoordinates;
+            case 1:
+                yBlocks.forEach(yBlock -> yBlock.setEnabled(false));
+                return yCoordinates;
+            case 2:
+                zBlocks.forEach(zBlock -> zBlock.setEnabled(false));
+                return zCoordinates;
+        }
+
+        return coordinateSet;
     }
 
     public void disableBlock(int x, int y, int z) {
@@ -46,10 +223,11 @@ public class Blocks3D {
     }
 
     public Block getBlock(int x, int y, int z) {
+        if (y >= this.blocks.size() || y < 0) return null;
         return this.blocks.get(y).getBlock(x, z);
     }
 
-    public class CoordinateSet {
+    public class CoordinateSet implements Cloneable {
         private int x1;
         private int y1;
         private int z1;
@@ -121,6 +299,11 @@ public class Blocks3D {
 
         public void setZ2(int z2) {
             this.z2 = z2;
+        }
+
+        @Override
+        protected CoordinateSet clone() throws CloneNotSupportedException {
+            return new CoordinateSet(x1, y1, z1, x2, y2, z2);
         }
     }
 

@@ -1,0 +1,40 @@
+{
+  "textures": {
+    "white": "blocks/white",
+    "orange": "blocks/orange",
+    "magenta": "blocks/magenta",
+    "light_blue": "blocks/light_blue",
+    "yellow": "blocks/yellow",
+    "lime": "blocks/lime",
+    "pink": "blocks/pink",
+    "gray": "blocks/gray",
+    "light_gray": "blocks/light_gray",
+    "cyan": "blocks/cyan",
+    "purple": "blocks/purple",
+    "blue": "blocks/blue",
+    "brown": "blocks/brown",
+    "green": "blocks/green",
+    "red": "blocks/red",
+    "black": "blocks/black"
+  },
+//  "display": {
+//    "head": {
+//      "rotation": [
+//        -20.0,
+//        0.0,
+//        0.0
+//      ],
+//      "translation": [
+//        -1.3,
+//        -28.0,
+//        -13.3
+//      ],
+//      "scale": [
+//        3.0125,
+//        3.0125,
+//        3.0125
+//      ]
+//    }
+//  },
+  "elements": []
+}

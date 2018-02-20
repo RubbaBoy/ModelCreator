@@ -55,10 +55,6 @@ public class Blocks3D {
 
         if (startTexture.equals("#transparent")) return coordinateSet;
 
-        /*
-         * START OF XXXXXXXXXXXXXXXXXXXXXX VALUES
-         */
-
         CoordinateSet xCoordinates = coordinateSet.clone();
         List<Block> xBlocks = new ArrayList<>();
 
@@ -68,120 +64,15 @@ public class Blocks3D {
         CoordinateSet zCoordinates = coordinateSet.clone();
         List<Block> zBlocks = new ArrayList<>();
 
-        // Going through future positive values on X axis
-
-        int index = 0;
-
-        while (true) {
-            index++;
-
-            Block nextBlock = getBlock(startX + index, startY, startZ);
-
-            if (nextBlock == null || !nextBlock.getTexture(mappedTextures).equals(startTexture) || !nextBlock.isEnabled()) break;
-
-            xCoordinates.setX2(startX + index);
-            xBlocks.add(nextBlock);
-        }
-
-        // Going through all future negative values on X axis
-
-        index = 0;
-
-        while (true) {
-            index--;
-
-            Block nextBlock = getBlock(startX + index, startY, startZ);
-
-            if (nextBlock == null || !nextBlock.getTexture(mappedTextures).equals(startTexture) || !nextBlock.isEnabled()) break;
-
-            xCoordinates.setX1(startX + index);
-            xBlocks.add(nextBlock);
-        }
-
-        /*
-         * END OF XXXXXXXXXXXXXXXXXXXXXX VALUES
-         */
+        xBlocks.addAll(shiftSingle(mappedTextures, startTexture, xCoordinates, startX, startY, startZ, 1, 0, 0));
+        xBlocks.addAll(shiftSingle(mappedTextures, startTexture, xCoordinates, startX, startY, startZ, -1, 0, 0));
 
 
+        yBlocks.addAll(shiftSingle(mappedTextures, startTexture, yCoordinates, startX, startY, startZ, 0, 1, 0));
+        yBlocks.addAll(shiftSingle(mappedTextures, startTexture, yCoordinates, startX, startY, startZ, 0, -1, 0));
 
-        /*
-         * START OF YYYYYYYYYYYYYYYYYYYYYYY VALUES
-         */
-
-        // Going through future positive values on Y axis
-
-        index = 0;
-
-        while (true) {
-            index++;
-
-            Block nextBlock = getBlock(startX, startY + index, startZ);
-
-            if (nextBlock == null || !nextBlock.getTexture(mappedTextures).equals(startTexture) || !nextBlock.isEnabled()) break;
-
-            yCoordinates.setY2(startY + index);
-            yBlocks.add(nextBlock);
-        }
-
-        // Going through all future negative values on Y axis
-
-        index = 0;
-
-        while (true) {
-            index--;
-
-            Block nextBlock = getBlock(startX, startY + index, startZ);
-
-            if (nextBlock == null || !nextBlock.getTexture(mappedTextures).equals(startTexture) || !nextBlock.isEnabled()) break;
-
-            yCoordinates.setY1(startY + index);
-            yBlocks.add(nextBlock);
-        }
-
-        /*
-         * END OF YYYYYYYYYYYYYYYYYYYYYYY VALUES
-         */
-
-
-
-        /*
-         * START OF ZZZZZZZZZZZZZZZZZZZZZZZZZ VALUES
-         */
-
-        // Going through future positive values on Z axis
-
-        index = 0;
-
-        while (true) {
-            index++;
-
-            Block nextBlock = getBlock(startX, startY, startZ + index);
-
-            if (nextBlock == null || !nextBlock.getTexture(mappedTextures).equals(startTexture) || !nextBlock.isEnabled()) break;
-
-            zCoordinates.setZ2(startZ + index);
-            zBlocks.add(nextBlock);
-        }
-
-        // Going through all future negative values on Z axis
-
-        index = 0;
-
-        while (true) {
-            index--;
-
-            Block nextBlock = getBlock(startX, startY, startZ + index);
-
-            if (nextBlock == null || !nextBlock.getTexture(mappedTextures).equals(startTexture) || !nextBlock.isEnabled()) break;
-
-            zCoordinates.setZ1(startZ + index);
-            zBlocks.add(nextBlock);
-        }
-
-        /*
-         * END OF ZZZZZZZZZZZZZZZZZZZZZZZZZ VALUES
-         */
-
+        zBlocks.addAll(shiftSingle(mappedTextures, startTexture, zCoordinates, startX, startY, startZ, 0, 0, 1));
+        zBlocks.addAll(shiftSingle(mappedTextures, startTexture, zCoordinates, startX, startY, startZ, 0, 0, -1));
 
         int direction = 0; // 0 = x
                            // 1 = y
@@ -216,6 +107,41 @@ public class Blocks3D {
         }
 
         return coordinateSet;
+    }
+
+    private List<Block> shiftSingle(MappedTextures mappedTextures, String startTexture, CoordinateSet coordinateSet, int startX, int startY, int startZ, int x, int y, int z) {
+        List<Block> ret = new ArrayList<>();
+        int index = 0;
+
+        while (true) {
+            index += (x < 0 || y < 0 || z < 0) ? -1 : 1;
+
+            Block nextBlock = getBlock(startX + (x != 0 ? index : 0), startY + (y != 0 ? index : 0), startZ + (z != 0 ? index : 0));
+
+            if (nextBlock == null || !nextBlock.getTexture(mappedTextures).equals(startTexture) || !nextBlock.isEnabled()) break;
+
+            if (x > 0) {
+                coordinateSet.setX2(startX + index);
+            } else if (x < 0) {
+                coordinateSet.setX1(startX + index);
+            }
+
+            if (y > 0) {
+                coordinateSet.setY2(startY + index);
+            } else if (y < 0) {
+                coordinateSet.setY1(startY + index);
+            }
+
+            if (z > 0) {
+                coordinateSet.setZ2(startZ + index);
+            } else if (z < 0) {
+                coordinateSet.setZ1(startZ + index);
+            }
+
+            ret.add(nextBlock);
+        }
+
+        return ret;
     }
 
     public void disableBlock(int x, int y, int z) {

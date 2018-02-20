@@ -72,8 +72,12 @@ public class Main {
                         new Up(texture, uv),
                         new Down(texture, uv));
 
+                System.out.println("coordinateSet = " + coordinateSet);
+
                 elements.add(new Element(coordinateSet.getFirst(), coordinateSet.getSecond(), faces));
             });
+
+            System.out.println("Done");
 
             model.setElements(elements);
 

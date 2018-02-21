@@ -31,16 +31,43 @@ public class Blocks3D {
     }
 
     public void iterate(MappedTextures mappedTextures, BiConsumer<Block, CoordinateSet> consumer) throws CloneNotSupportedException {
+        printLaters();
         for (int y = 0; y < blocks.size(); y++) {
             int finalY = y;
             blocks.get(y).loop(mappedTextures, (block, x, z) -> {
                 if (block.isEnabled()) {
                     CoordinateSet coordinateSet = fillBiggest(mappedTextures, block, new CoordinateSet(x, finalY, z, x + 1, finalY + 1, z + 1));
-                    System.out.println(blocks.get(0));
+//                    System.out.println(blocks.get(0));
+                    printLaters();
                     consumer.accept(block, coordinateSet);
                 }
             });
         }
+    }
+
+    private void printLaters() {
+//        StringBuilder stringBuilder = new StringBuilder(repeat("＝", blocks.get(0).getWidth())).append("\n");
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int i = 0; i < blocks.size(); i++) {
+            stringBuilder.append("＝＝＝＝＝ Layer ").append(i).append(" ＝＝＝＝＝\n");
+            stringBuilder.append(blocks.get(i).toString()).append("\n");
+//            stringBuilder.append(repeat("＝", blocks.get(0).getWidth())).append("\n");
+        }
+
+        stringBuilder.append("\n");
+
+        System.out.println(stringBuilder.toString());
+    }
+
+    private String repeat(String repeat, int amount) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int i = 0; i < amount; i++) {
+            stringBuilder.append(repeat);
+        }
+
+        return stringBuilder.toString();
     }
 
     public CoordinateSet fillBiggest(MappedTextures mappedTextures, Block block, CoordinateSet coordinateSet) throws CloneNotSupportedException {

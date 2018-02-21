@@ -58,4 +58,12 @@ public class BlockPlane {
 
         return stringBuilder.toString();
     }
+
+    public int getWidth() {
+        return grid[0].length;
+    }
+
+    public int getHeight() {
+        return grid.length;
+    }
 }

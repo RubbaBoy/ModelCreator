@@ -47,10 +47,6 @@ public class Main {
 
             List<Block> blocks = getBlocksFromData(blockBytes, dataBytes);
 
-            System.out.println(entities);
-
-            System.out.println("blocks = " + blocks);
-
             Blocks3D blocks3D = new Blocks3D(mappedTextures, blocks, length, width, height);
 
             String file = new String(Files.readAllBytes(Paths.get("E:\\ModelCreator\\json\\template.json")));
@@ -71,8 +67,6 @@ public class Main {
                         new West(texture, uv),
                         new Up(texture, uv),
                         new Down(texture, uv));
-
-                System.out.println("coordinateSet = " + coordinateSet);
 
                 elements.add(new Element(coordinateSet.getFirst(), coordinateSet.getSecond(), faces));
             });

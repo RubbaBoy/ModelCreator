@@ -40,6 +40,7 @@ public class Blocks3D {
             blocks.get(y).loop(mappedTextures, (block, x, z) -> {
                 if (block.isEnabled()) {
                     CoordinateSet coordinateSet = fillBiggest(mappedTextures, block, new CoordinateSet(x, finalY, z, x + 1, finalY + 1, z + 1));
+                    System.out.println(blocks.get(0));
                     consumer.accept(block, coordinateSet);
                 }
             });
@@ -68,11 +69,13 @@ public class Blocks3D {
         List<List<Integer>> zBlockCoordinates = new ArrayList<>();
 
 //        System.out.println("\n\nBefore xCoordinates was = " + xCoordinates);
+//        xBlocks.add(block);
         xBlocks.addAll(shiftSingle(mappedTextures, startTexture, xCoordinates, xBlockCoordinates, startX, startY, startZ, 1, 0, 0));
 
 //        System.out.println("After xBlocks was " + xBlocks);
 //        System.out.println("and the xCoordinates was: " + xCoordinates + "\n\n");
 
+//        xBlocks.add(block);
         xBlocks.addAll(shiftSingle(mappedTextures, startTexture, xCoordinates, xBlockCoordinates, startX, startY, startZ, -1, 0, 0));
 
 
@@ -88,6 +91,12 @@ public class Blocks3D {
 //        System.out.println("zBlockCoordinates = " + zBlockCoordinates);
 
 //        System.out.println("xCoordinates = " + xCoordinates);
+
+        if (startTexture.contains("red")) {
+            System.out.println("xBlockCoordinates = " + xBlockCoordinates);
+            System.out.println("yBlockCoordinates = " + yBlockCoordinates);
+            System.out.println("zBlockCoordinates = " + zBlockCoordinates);
+        }
 
         int direction = 0; // 0 = x
                            // 1 = y
@@ -117,16 +126,31 @@ public class Blocks3D {
                 fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, yBlockCoordinates, 0, -1, 0));
 
                 CoordinateSet secondTemp = xCoordinates.clone();
+
+                if (startTexture.contains("red")) {
+                    System.out.println("ORIGINAL secondTemp = " + secondTemp + "\t\t\t\t\t---------------------------------");
+                }
+
                 List<Block> fullZBlocks = new ArrayList<>(xBlocks);
                 fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, zBlockCoordinates, 0, 0, 1));
                 fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, zBlockCoordinates, 0, 0, -1));
 
+                if (startTexture.contains("red")) {
+                    System.out.println("yBlockCoordinates = " + yBlockCoordinates);
+                    System.out.println("zBlockCoordinates = " + zBlockCoordinates);
+                }
+
                 if (fullZBlocks.size() > fullYBlocks.size()) {
                     fullZBlocks.forEach(zBlock -> zBlock.setEnabled(false));
-                    return firstTemp;
+
+                    if (startTexture.contains("red")) {
+                        System.out.println("MODDED secondTemp = " + secondTemp + "\t\t\t\t\t---------------------------------");
+                    }
+
+                    return secondTemp;
                 } else {
                     fullYBlocks.forEach(yBlock -> yBlock.setEnabled(false));
-                    return secondTemp;
+                    return firstTemp;
                 }
             case 1:
                 firstTemp = yCoordinates.clone();
@@ -142,29 +166,34 @@ public class Blocks3D {
 
                 if (fullZBlocks.size() > fullXBlocks.size()) {
                     fullZBlocks.forEach(zBlock -> zBlock.setEnabled(false));
-                    return firstTemp;
+                    return secondTemp;
                 } else {
                     fullXBlocks.forEach(xBlock -> xBlock.setEnabled(false));
-                    return secondTemp;
+                    return firstTemp;
                 }
             case 2:
                 firstTemp = zCoordinates.clone();
                 fullXBlocks = new ArrayList<>(zBlocks);
-//                System.out.println("COMINGGGGG xCoordinates = " + xCoordinates);
+                System.out.println("COMINGGGGG xCoordinates = " + xBlockCoordinates);
                 fullXBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, xBlockCoordinates, 1, 0, 0));
                 fullXBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, xBlockCoordinates, -1, 0, 0));
+
 
                 secondTemp = zCoordinates.clone();
                 fullYBlocks = new ArrayList<>(zBlocks);
                 fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, yBlockCoordinates, 0, 1, 0));
                 fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, yBlockCoordinates, 0, -1, 0));
 
+                System.out.println("---------== xBlockCoordinates = " + firstTemp);
+//                System.out.println("---------== yBlockCoordinates = " + secondTemp);
+
                 if (fullYBlocks.size() > fullXBlocks.size()) {
                     fullYBlocks.forEach(yBlock -> yBlock.setEnabled(false));
-                    return firstTemp;
-                } else {
-                    fullXBlocks.forEach(xBlock -> xBlock.setEnabled(false));
                     return secondTemp;
+                } else {
+//                block.setEnabled(false);
+                    fullXBlocks.forEach(xBlock -> xBlock.setEnabled(false));
+                    return firstTemp;
                 }
         }
 
@@ -181,11 +210,13 @@ public class Blocks3D {
         int index = 0;
 
         while (true) {
-            index += (x < 0 || y < 0 || z < 0) ? -1 : 1;
-
             Block nextBlock = getBlock(startX + (x != 0 ? index : 0), startY + (y != 0 ? index : 0), startZ + (z != 0 ? index : 0));
 
-            if (nextBlock == null || !nextBlock.getTexture(mappedTextures).equals(startTexture) || !nextBlock.isEnabled()) break;
+            if (nextBlock == null || !nextBlock.getTexture(mappedTextures).equals(startTexture) || !nextBlock.isEnabled()) {
+                System.out.println("index = " + index);
+                System.out.println("Bad = (" + (startX + (x != 0 ? index : 0)) + ", " +  (startY + (y != 0 ? index : 0)) + ", " +  (startZ + (z != 0 ? index : 0)) + ")");
+                break;
+            }
 
             blockCoordinates.add(Arrays.asList(startX + (x != 0 ? index : 0), startY + (y != 0 ? index : 0), startZ + (z != 0 ? index : 0)));
             ret.add(nextBlock);
@@ -215,6 +246,8 @@ public class Blocks3D {
             } else if (z < 0) {
                 coordinateSet.setZ1(startZ + index);
             }
+
+            index += (x < 0 || y < 0 || z < 0) ? -1 : 1;
         }
 
         return ret;
@@ -224,16 +257,18 @@ public class Blocks3D {
         List<Block> ret = new ArrayList<>();
         int index = 0;
 
+        System.out.println("mappedTextures = [" + mappedTextures + "], startTexture = [" + startTexture + "], coordinateSet = [" + coordinateSet + "], startCoords = [" + startCoords + "], x = [" + x + "], y = [" + y + "], z = [" + z + "]");
+
 //        System.out.println("startTexture = " + startTexture);
 
         CoordinateSet originalCoordinateSet = coordinateSet.clone();
 
-//        System.out.println("startCoords = " + startCoords.size());
+        System.out.println("startCoords = " + startCoords.size());
 
 //        System.out.println("coordinateSet = " + coordinateSet);
 
         while (true) {
-            index += (x < 0 || y < 0 || z < 0) ? -1 : 1;
+            System.out.println("index = " + index);
 
             List<Block> nextBlocks = new ArrayList<>();
 
@@ -243,10 +278,14 @@ public class Blocks3D {
                 nextBlocks.add(getBlock(startCoord.get(0) + (x != 0 ? index : 0), startCoord.get(1) + (y != 0 ? index : 0), startCoord.get(2) + (z != 0 ? index : 0)));
             }
 
-            if (nextBlocks.size() == 0) return ret;
+            if (nextBlocks.size() == 0) {
+                System.out.println("ZERO");
+                return ret;
+            } else {
+                System.out.println("Not zero!");
+            }
 
             for (Block nextBlock : nextBlocks) {
-//                if (nextBlock != null) System.out.println(nextBlock.isEnabled());
                 if (nextBlock == null || !nextBlock.getTexture(mappedTextures).equals(startTexture) || !nextBlock.isEnabled()) return ret;
             }
 
@@ -271,6 +310,8 @@ public class Blocks3D {
             } else if (z < 0) {
                 coordinateSet.setZ1(originalCoordinateSet.getZ1() + index);
             }
+
+            index += (x < 0 || y < 0 || z < 0) ? -1 : 1;
         }
     }
 

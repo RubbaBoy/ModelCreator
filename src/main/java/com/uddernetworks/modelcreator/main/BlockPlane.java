@@ -31,7 +31,7 @@ public class BlockPlane {
      * @return The requested block
      */
     public Block getBlock(int x, int z) {
-        if (x >= grid.length || z >= grid[0].length ||
+        if (x >= grid[0].length || z >= grid.length ||
             x < 0 || z < 0) return null;
         return grid[z][x].isEnabled() ? grid[z][x] : null;
     }
@@ -44,4 +44,18 @@ public class BlockPlane {
         }
     }
 
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (Block[] blocks : grid) {
+            for (Block block : blocks) {
+                stringBuilder.append(block.isEnabled() && block.getId() != 0 ? "＃" : "．");
+            }
+
+            stringBuilder.append("\n");
+        }
+
+        return stringBuilder.toString();
+    }
 }

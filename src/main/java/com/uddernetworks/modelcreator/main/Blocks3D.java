@@ -122,8 +122,8 @@ public class Blocks3D {
             case 0:
                 CoordinateSet firstTemp = xCoordinates.clone();
                 List<Block> fullYBlocks = new ArrayList<>(xBlocks);
-                fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, yBlockCoordinates, 0, 1, 0));
-                fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, yBlockCoordinates, 0, -1, 0));
+                fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, xBlockCoordinates, 0, 1, 0));
+                fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, xBlockCoordinates, 0, -1, 0));
 
                 CoordinateSet secondTemp = xCoordinates.clone();
 
@@ -132,8 +132,8 @@ public class Blocks3D {
                 }
 
                 List<Block> fullZBlocks = new ArrayList<>(xBlocks);
-                fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, zBlockCoordinates, 0, 0, 1));
-                fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, zBlockCoordinates, 0, 0, -1));
+                fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, xBlockCoordinates, 0, 0, 1));
+                fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, xBlockCoordinates, 0, 0, -1));
 
                 if (startTexture.contains("red")) {
                     System.out.println("yBlockCoordinates = " + yBlockCoordinates);
@@ -156,13 +156,13 @@ public class Blocks3D {
                 firstTemp = yCoordinates.clone();
                 List<Block> fullXBlocks = new ArrayList<>(yBlocks);
 //                System.out.println("COMINGGGGG xCoordinates = " + xCoordinates);
-                fullXBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, xBlockCoordinates, 1, 0, 0));
-                fullXBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, xBlockCoordinates, -1, 0, 0));
+                fullXBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, yBlockCoordinates, 1, 0, 0));
+                fullXBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, yBlockCoordinates, -1, 0, 0));
 
                 secondTemp = yCoordinates.clone();
                 fullZBlocks = new ArrayList<>(yBlocks);
-                fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, zBlockCoordinates, 0, 0, 1));
-                fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, zBlockCoordinates, 0, 0, -1));
+                fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, yBlockCoordinates, 0, 0, 1));
+                fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, yBlockCoordinates, 0, 0, -1));
 
                 if (fullZBlocks.size() > fullXBlocks.size()) {
                     fullZBlocks.forEach(zBlock -> zBlock.setEnabled(false));
@@ -175,14 +175,14 @@ public class Blocks3D {
                 firstTemp = zCoordinates.clone();
                 fullXBlocks = new ArrayList<>(zBlocks);
                 System.out.println("COMINGGGGG xCoordinates = " + xBlockCoordinates);
-                fullXBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, xBlockCoordinates, 1, 0, 0));
-                fullXBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, xBlockCoordinates, -1, 0, 0));
+                fullXBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, zBlockCoordinates, 1, 0, 0));
+                fullXBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, zBlockCoordinates, -1, 0, 0));
 
 
                 secondTemp = zCoordinates.clone();
                 fullYBlocks = new ArrayList<>(zBlocks);
-                fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, yBlockCoordinates, 0, 1, 0));
-                fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, yBlockCoordinates, 0, -1, 0));
+                fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, zBlockCoordinates, 0, 1, 0));
+                fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, zBlockCoordinates, 0, -1, 0));
 
                 System.out.println("---------== xBlockCoordinates = " + firstTemp);
 //                System.out.println("---------== yBlockCoordinates = " + secondTemp);

@@ -129,15 +129,19 @@ public class Blocks3D {
 
                 List<Block> fullZBlocks = new ArrayList<>(xBlocks);
                 List<List<Integer>> ZBlockCoords = new ArrayList<>(xBlockCoordinates);
+//                System.out.println("ZBlockCoords = " + ZBlockCoords);
                 fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, ZBlockCoords, 0, 0, 1, true));
                 fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, ZBlockCoords, 0, 0, -1, true));
+
+//                System.out.println("fullYBlocks = " + fullYBlocks);
+//                System.out.println("ZBlockCoords = " + ZBlockCoords);
 
                 if (fullYBlocks.size() > fullZBlocks.size()) {
 
                     // TODO: Z
 
                     fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, YBlockCoords, 0, 0, 1, false));
-                    fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, YBlockCoords, 0, 0, -1, false));
+//                    fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, YBlockCoords, 0, 0, -1, false));
 
                     fullYBlocks.forEach(yBlock -> yBlock.setEnabled(false));
                     return firstTemp;
@@ -145,8 +149,12 @@ public class Blocks3D {
 
                     // TODO: Y
 
+//                    System.out.println("Going up");
+
+                    // Going up
+
                     fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, ZBlockCoords, 0, 1, 0, false));
-                    fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, ZBlockCoords, 0, -1, 0, false));
+//                    fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, ZBlockCoords, 0, -1, 0, false));
 
                     fullZBlocks.forEach(zBlock -> zBlock.setEnabled(false));
                     return secondTemp;
@@ -169,7 +177,7 @@ public class Blocks3D {
                     // TODO: X
 
                     fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, ZBlockCoords, 1, 0, 0, false));
-                    fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, ZBlockCoords, -1, 0, 0, false));
+//                    fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, ZBlockCoords, -1, 0, 0, false));
 
                     fullZBlocks.forEach(zBlock -> zBlock.setEnabled(false));
                     return secondTemp;
@@ -178,7 +186,7 @@ public class Blocks3D {
                     // TODO: Z
 
                     fullXBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, XBlockCoords, 0, 0, 1, false));
-                    fullXBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, XBlockCoords, 0, 0, -1, false));
+//                    fullXBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, XBlockCoords, 0, 0, -1, false));
 
                     fullXBlocks.forEach(xBlock -> xBlock.setEnabled(false));
                     return firstTemp;
@@ -202,7 +210,7 @@ public class Blocks3D {
                     // TODO: X
 
                     fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, YBlockCoords, 1, 0, 0, false));
-                    fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, YBlockCoords, -1, 0, 0, false));
+//                    fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, YBlockCoords, -1, 0, 0, false));
 
                     fullYBlocks.forEach(yBlock -> yBlock.setEnabled(false));
                     return secondTemp;
@@ -211,7 +219,7 @@ public class Blocks3D {
                     // TODO: Y
 
                     fullXBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, XBlockCoords, 0, 1, 0, false));
-                    fullXBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, XBlockCoords, 0, -1, 0, false));
+//                    fullXBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, XBlockCoords, 0, -1, 0, false));
 
                     fullXBlocks.forEach(xBlock -> xBlock.setEnabled(false));
                     return firstTemp;
@@ -259,19 +267,20 @@ public class Blocks3D {
         return ret;
     }
 
-    private List<Block> shiftRow(MappedTextures mappedTextures, String startTexture, CoordinateSet coordinateSet, List<List<Integer>> startCoords, int x, int y, int z, boolean modifyCoordinatesList) throws CloneNotSupportedException {
+    private List<Block> shiftRow(MappedTextures mappedTextures, String startTexture, CoordinateSet coordinateSet, List<List<Integer>> startCoords, int x, int y, int z, boolean modifyCoordinatesList) {
         List<Block> ret = new ArrayList<>();
         int index = 0;
 
+        List<List<Integer>> originalStartCoords = new ArrayList<>(startCoords);
         CoordinateSet originalCoordinateSet = coordinateSet.clone();
 
         while (true) {
             List<Block> nextBlocks = new ArrayList<>();
-//            List<List<Integer>> tempCoords = new ArrayList<>();
+            List<List<Integer>> tempCoords = new ArrayList<>();
 
-            for (List<Integer> startCoord : startCoords) {
+            for (List<Integer> startCoord : originalStartCoords) {
                 nextBlocks.add(getBlock(startCoord.get(0) + (x != 0 ? index : 0), startCoord.get(1) + (y != 0 ? index : 0), startCoord.get(2) + (z != 0 ? index : 0)));
-//                if (modifyCoordinatesList) tempCoords.add(Arrays.asList(startCoord.get(0) + (x != 0 ? index : 0), startCoord.get(1) + (y != 0 ? index : 0), startCoord.get(2) + (z != 0 ? index : 0)));
+                if (modifyCoordinatesList) tempCoords.add(Arrays.asList(startCoord.get(0) + (x != 0 ? index : 0), startCoord.get(1) + (y != 0 ? index : 0), startCoord.get(2) + (z != 0 ? index : 0)));
             }
 
             if (nextBlocks.size() == 0) return ret;
@@ -281,7 +290,7 @@ public class Blocks3D {
             }
 
             ret.addAll(nextBlocks);
-//            if (modifyCoordinatesList) startCoords.addAll(tempCoords);
+            if (modifyCoordinatesList) startCoords.addAll(tempCoords);
 
             if (x > 0) {
                 coordinateSet.setX2(originalCoordinateSet.getX2() + index);

@@ -1,7 +1,5 @@
 package com.uddernetworks.modelcreator.main;
 
-import com.uddernetworks.modelcreator.json.Textures;
-
 import java.util.HashMap;
 import java.util.Map;
 

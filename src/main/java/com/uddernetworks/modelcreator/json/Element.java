@@ -47,11 +47,4 @@ public class Element {
     public void setFaces(Faces faces) {
         this.faces = faces;
     }
-
-//    @Override
-//    public boolean equals(Object object) {
-//        if (!(object instanceof Element)) return object instanceof CoordElement && object.equals(this);
-//        Element element = (Element) object;
-//        return element.faces.equals(this.faces);
-//    }
 }

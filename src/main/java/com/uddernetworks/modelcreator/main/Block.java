@@ -1,7 +1,5 @@
 package com.uddernetworks.modelcreator.main;
 
-import com.uddernetworks.modelcreator.json.Textures;
-
 public class Block {
     private int id;
     private int data;

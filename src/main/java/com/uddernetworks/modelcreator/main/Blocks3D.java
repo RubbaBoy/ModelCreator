@@ -31,43 +31,18 @@ public class Blocks3D {
     }
 
     public void iterate(MappedTextures mappedTextures, BiConsumer<Block, CoordinateSet> consumer) throws CloneNotSupportedException {
-        printLaters();
         for (int y = 0; y < blocks.size(); y++) {
             int finalY = y;
             blocks.get(y).loop(mappedTextures, (block, x, z) -> {
                 if (block.isEnabled()) {
                     CoordinateSet coordinateSet = fillBiggest(mappedTextures, block, new CoordinateSet(x, finalY, z, x + 1, finalY + 1, z + 1));
-                    printLaters();
                     consumer.accept(block, coordinateSet);
                 }
             });
         }
     }
 
-    private void printLaters() {
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for (int i = 0; i < blocks.size(); i++) {
-            stringBuilder.append("＝＝＝＝＝ Layer ").append(i).append(" ＝＝＝＝＝\n");
-            stringBuilder.append(blocks.get(i).toString()).append("\n");
-        }
-
-        stringBuilder.append("\n");
-
-        System.out.println(stringBuilder.toString());
-    }
-
-    private String repeat(String repeat, int amount) {
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for (int i = 0; i < amount; i++) {
-            stringBuilder.append(repeat);
-        }
-
-        return stringBuilder.toString();
-    }
-
-    public CoordinateSet fillBiggest(MappedTextures mappedTextures, Block block, CoordinateSet coordinateSet) throws CloneNotSupportedException {
+    public CoordinateSet fillBiggest(MappedTextures mappedTextures, Block block, CoordinateSet coordinateSet) {
         int startX = coordinateSet.getX1();
         int startY = coordinateSet.getY1();
         int startZ = coordinateSet.getZ1();
@@ -115,8 +90,6 @@ public class Blocks3D {
             }
         }
 
-        System.out.println("direction = " + direction);
-
         switch (direction) {
             case 0: //  X
                 CoordinateSet firstTemp = xCoordinates.clone();
@@ -129,32 +102,18 @@ public class Blocks3D {
 
                 List<Block> fullZBlocks = new ArrayList<>(xBlocks);
                 List<List<Integer>> ZBlockCoords = new ArrayList<>(xBlockCoordinates);
-//                System.out.println("ZBlockCoords = " + ZBlockCoords);
                 fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, ZBlockCoords, 0, 0, 1, true));
                 fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, ZBlockCoords, 0, 0, -1, true));
 
-//                System.out.println("fullYBlocks = " + fullYBlocks);
-//                System.out.println("ZBlockCoords = " + ZBlockCoords);
-
                 if (fullYBlocks.size() > fullZBlocks.size()) {
-
-                    // TODO: Z
-
                     fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, YBlockCoords, 0, 0, 1, false));
-//                    fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, YBlockCoords, 0, 0, -1, false));
+                    fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, YBlockCoords, 0, 0, -1, false));
 
                     fullYBlocks.forEach(yBlock -> yBlock.setEnabled(false));
                     return firstTemp;
                 } else {
-
-                    // TODO: Y
-
-//                    System.out.println("Going up");
-
-                    // Going up
-
                     fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, ZBlockCoords, 0, 1, 0, false));
-//                    fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, ZBlockCoords, 0, -1, 0, false));
+                    fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, ZBlockCoords, 0, -1, 0, false));
 
                     fullZBlocks.forEach(zBlock -> zBlock.setEnabled(false));
                     return secondTemp;
@@ -173,20 +132,14 @@ public class Blocks3D {
                 fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, ZBlockCoords, 0, 0, -1, true));
 
                 if (fullZBlocks.size() > fullXBlocks.size()) {
-
-                    // TODO: X
-
                     fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, ZBlockCoords, 1, 0, 0, false));
-//                    fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, ZBlockCoords, -1, 0, 0, false));
+                    fullZBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, ZBlockCoords, -1, 0, 0, false));
 
                     fullZBlocks.forEach(zBlock -> zBlock.setEnabled(false));
                     return secondTemp;
                 } else {
-
-                    // TODO: Z
-
                     fullXBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, XBlockCoords, 0, 0, 1, false));
-//                    fullXBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, XBlockCoords, 0, 0, -1, false));
+                    fullXBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, XBlockCoords, 0, 0, -1, false));
 
                     fullXBlocks.forEach(xBlock -> xBlock.setEnabled(false));
                     return firstTemp;
@@ -206,20 +159,14 @@ public class Blocks3D {
                 fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, YBlockCoords, 0, -1, 0, true));
 
                 if (fullYBlocks.size() > fullXBlocks.size()) {
-
-                    // TODO: X
-
                     fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, YBlockCoords, 1, 0, 0, false));
-//                    fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, YBlockCoords, -1, 0, 0, false));
+                    fullYBlocks.addAll(shiftRow(mappedTextures, startTexture, secondTemp, YBlockCoords, -1, 0, 0, false));
 
                     fullYBlocks.forEach(yBlock -> yBlock.setEnabled(false));
                     return secondTemp;
                 } else {
-
-                    // TODO: Y
-
                     fullXBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, XBlockCoords, 0, 1, 0, false));
-//                    fullXBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, XBlockCoords, 0, -1, 0, false));
+                    fullXBlocks.addAll(shiftRow(mappedTextures, startTexture, firstTemp, XBlockCoords, 0, -1, 0, false));
 
                     fullXBlocks.forEach(xBlock -> xBlock.setEnabled(false));
                     return firstTemp;

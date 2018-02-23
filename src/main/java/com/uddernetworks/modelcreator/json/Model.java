@@ -30,10 +30,6 @@ public class Model implements Cloneable {
         this.comment = comment;
     }
 
-//    public Textures getTextures() {
-//        return textures;
-//    }
-
     public void setTextures(Textures textures) {
         this.textures = textures;
     }

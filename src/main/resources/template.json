@@ -1,4 +1,5 @@
 {
+  "__comment": "Converted from a Schematic using ModelCreator by RubbaBoy https://rubbaboy.me/",
   "textures": {
     "white": "blocks/white",
     "orange": "blocks/orange",
@@ -17,24 +18,5 @@
     "red": "blocks/red",
     "black": "blocks/black"
   },
-//  "display": {
-//    "head": {
-//      "rotation": [
-//        -20.0,
-//        0.0,
-//        0.0
-//      ],
-//      "translation": [
-//        -1.3,
-//        -28.0,
-//        -13.3
-//      ],
-//      "scale": [
-//        3.0125,
-//        3.0125,
-//        3.0125
-//      ]
-//    }
-//  },
   "elements": []
 }

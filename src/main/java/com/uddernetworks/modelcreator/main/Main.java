@@ -4,45 +4,47 @@ import com.google.gson.GsonBuilder;
 import com.uddernetworks.modelcreator.json.*;
 import org.jnbt.*;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.*;
 
 public class Main {
 
-    private static Tag getChildTag(Map<String, Tag> items, String key, Class<? extends Tag> expected) {
-        Tag tag = items.get(key);
-        return tag;
+    private static Tag getChildTag(Map<String, Tag> items, String key) {
+        return items.get(key);
     }
 
     public static void main(String[] args) {
         try {
             MappedTextures mappedTextures = new MappedTextures();
 
-            File schematicFile = new File("E:\\ModelCreator\\schematics\\test_schematic.schematic");
-            File outputFile = new File("E:\\ModelCreator\\json\\output.json");
+            long start = System.currentTimeMillis();
 
+            if (args.length != 2) {
+                System.err.println("Invalid format. Arguments should be schematic file first, output file second, and an optional true/false value to display layers in console.");
+                System.exit(0);
+            }
+
+            File schematicFile = new File(args[0]);
+            File outputFile = new File(args[1]);
+            outputFile.createNewFile();
 
             FileInputStream fis = new FileInputStream(schematicFile);
             NBTInputStream nbt = new NBTInputStream(fis);
             CompoundTag backuptag = (CompoundTag) nbt.readTag();
             Map<String, Tag> tagCollection = backuptag.getValue();
 
-            short width = (Short)getChildTag(tagCollection, "Width", ShortTag.class).getValue();
-            short height = (Short) getChildTag(tagCollection, "Height", ShortTag.class).getValue();
-            short length = (Short) getChildTag(tagCollection, "Length", ShortTag.class).getValue();
+            short width = (Short) getChildTag(tagCollection, "Width").getValue();
+            short height = (Short) getChildTag(tagCollection, "Height").getValue();
+            short length = (Short) getChildTag(tagCollection, "Length").getValue();
 
-            byte[] blockBytes = (byte[]) getChildTag(tagCollection, "Blocks", ByteArrayTag.class).getValue();
-            byte[] dataBytes = (byte[]) getChildTag(tagCollection, "Data", ByteArrayTag.class).getValue();
+            byte[] blockBytes = (byte[]) getChildTag(tagCollection, "Blocks").getValue();
+            byte[] dataBytes = (byte[]) getChildTag(tagCollection, "Data").getValue();
 
-            List entities = (List) getChildTag(tagCollection, "Entities", ListTag.class).getValue();
-            List tileentities = (List) getChildTag(tagCollection, "TileEntities", ListTag.class).getValue();
+            List entities = (List) getChildTag(tagCollection, "Entities").getValue();
+            List tileentities = (List) getChildTag(tagCollection, "TileEntities").getValue();
             nbt.close();
             fis.close();
 
@@ -50,9 +52,22 @@ public class Main {
 
             Blocks3D blocks3D = new Blocks3D(mappedTextures, blocks, length, width, height);
 
-            String file = new String(Files.readAllBytes(Paths.get("E:\\ModelCreator\\json\\template.json")));
+            InputStream inputStream = Main.class.getClassLoader().getResourceAsStream("template.json");
 
-            Model model = new GsonBuilder().create().fromJson(file, Model.class);
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+            int nRead;
+            byte[] data = new byte[1024];
+
+            while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+                buffer.write(data, 0, nRead);
+            }
+
+            buffer.flush();
+
+            String text = new String(buffer.toByteArray(), StandardCharsets.UTF_8);
+
+            Model model = new GsonBuilder().create().fromJson(text, Model.class);
 
             List<Element> elements = new ArrayList<>();
 
@@ -72,13 +87,13 @@ public class Main {
                 elements.add(new Element(coordinateSet.getFirst(), coordinateSet.getSecond(), faces));
             });
 
-            System.out.println("Done");
-
             model.setElements(elements);
 
             String gson = new GsonBuilder().setPrettyPrinting().create().toJson(model);
 
             Files.write(outputFile.toPath(), gson.getBytes());
+
+            System.out.println("Done in " + (System.currentTimeMillis() - start) + "ms");
 
         } catch (Exception e) {
             e.printStackTrace();
